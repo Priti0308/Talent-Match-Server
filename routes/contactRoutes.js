@@ -1,0 +1,8 @@
+const express = require('express');
+const router = express.Router();
+const { sendContactMessage } = require('../controllers/contactController');
+
+// POST /api/contact/send
+router.post('/send', sendContactMessage);
+
+module.exports = router;
