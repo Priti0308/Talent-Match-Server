@@ -23,7 +23,7 @@ connectDB();
 
 const app = express();
 app.use(cors({
-  origin: 'http://localhost:5173', // Your Vite React port
+  origin: ['http://localhost:5173', 'https://talent-match-lilac.vercel.app', 'https://talent-match-9rsc.onrender.com'], 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
