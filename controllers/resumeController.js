@@ -54,7 +54,7 @@ ${resumeText.substring(0, 3000)}
 `;
 
     const result = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-2.5-flash",
       contents: [{ role: "user", parts: [{ text: prompt }] }],
       config: {
         thinking_level: "medium",

@@ -37,7 +37,7 @@ exports.startInterview = async (req, res) => {
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({
-      model: "gemini-3-flash-preview", // CHANGED TO 2.5
+      model: "gemini-2.5-flash", // CHANGED TO 2.5
       generationConfig: { responseMimeType: "application/json", candidateCount: 1 }
     });
 
@@ -98,7 +98,7 @@ exports.analyzeRound = async (req, res) => {
     }
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({
-      model: "gemini-3-flash-preview", // CHANGED TO 2.5
+      model: "gemini-2.5-flash", // CHANGED TO 2.5
       generationConfig: { responseMimeType: "application/json" }
     });
 
@@ -126,7 +126,7 @@ exports.finalizeInterview = async (req, res) => {
     const { allRoundResults, field } = req.body;
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({
-      model: "gemini-3-flash-preview", // CHANGED TO 2.5
+      model: "gemini-2.5-flash", // CHANGED TO 2.5
       generationConfig: { responseMimeType: "application/json" }
     });
 
