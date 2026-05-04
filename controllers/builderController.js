@@ -1,5 +1,5 @@
 const BuiltResume = require('../models/BuiltResume');
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { GoogleGenAI } = require("@google/genai");
 
 
 // CREATE: Save new resume
@@ -112,11 +112,13 @@ Return ONLY the newly polished text without any quotes or explanations.`;
       return res.status(400).json({ success: false, message: 'Invalid section' });
     }
 
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    const result = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt
+    });
     
-    const result = await model.generateContent(prompt);
-    let suggestion = result.response.text().trim();
+    let suggestion = result.text.trim();
     suggestion = suggestion.replace(/^"+|"+$/g, '').replace(/(\*\*|__)/g, '');
 
     res.status(200).json({ success: true, text: suggestion });

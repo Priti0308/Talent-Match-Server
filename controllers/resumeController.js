@@ -19,9 +19,7 @@ exports.analyzeResume = async (req, res) => {
       return res.status(400).json({ error: "Could not extract text from PDF. Ensure it's not an image." });
     }
 
-    const ai = new GoogleGenAI({
-      apiKey: process.env.GEMINI_API_KEY,
-    });
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
     const prompt = `
 You are an expert ATS (Applicant Tracking System) and HR professional. 
@@ -55,13 +53,9 @@ ${resumeText.substring(0, 3000)}
 
     const result = await ai.models.generateContent({
       model: "gemini-2.5-flash",
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
-      config: {
-        thinking_level: "medium",
-        response_mime_type: "application/json"
-      }
+      contents: prompt,
+      config: { responseMimeType: "application/json" }
     });
-
     const aiResponse = result.text;
 
     try {

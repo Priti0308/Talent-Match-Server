@@ -1,4 +1,4 @@
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { GoogleGenAI } = require("@google/genai");
 const pdfParse = require("pdf-parse");
 const Interview = require("../models/Interview");
 
@@ -8,10 +8,10 @@ const parseJSON = (text) => {
 };
 
 // --- HELPER FUNCTION: AI Generation with Retry Logic ---
-const generateWithRetry = async (model, prompt, retries = 3, delay = 2000) => {
+const generateWithRetry = async (ai, config, retries = 3, delay = 2000) => {
   for (let i = 0; i < retries; i++) {
     try {
-      const result = await model.generateContent(prompt);
+      const result = await ai.models.generateContent(config);
       return result;
     } catch (error) {
       if (error.status === 503 && i < retries - 1) {
@@ -35,11 +35,7 @@ exports.startInterview = async (req, res) => {
     const pdfData = await pdfParse(req.file.buffer);
     const resumeText = pdfData.text.trim().substring(0, 5000);
 
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash", // CHANGED TO 2.5
-      generationConfig: { responseMimeType: "application/json", candidateCount: 1 }
-    });
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
     const prompt = `
       You are an expert AI Recruitment Officer. Analyze this resume and generate a complete interview dataset.
@@ -79,8 +75,12 @@ exports.startInterview = async (req, res) => {
       ${resumeText}
     `;
 
-    const result = await generateWithRetry(model, prompt);
-    const responseData = parseJSON(result.response.text());
+    const result = await generateWithRetry(ai, {
+      model: "gemini-2.5-flash",
+      contents: prompt,
+      config: { responseMimeType: "application/json" }
+    });
+    const responseData = parseJSON(result.text);
     res.status(200).json(responseData);
 
   } catch (error) {
@@ -96,11 +96,7 @@ exports.analyzeRound = async (req, res) => {
     if (!roundName || !questions || !answers) {
       return res.status(400).json({ error: "Missing required data for analysis." });
     }
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash", // CHANGED TO 2.5
-      generationConfig: { responseMimeType: "application/json" }
-    });
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
     const prompt = `
       Analyze the ${roundName} performance for an ${field} student.
@@ -112,8 +108,12 @@ exports.analyzeRound = async (req, res) => {
       Note: DO NOT provide a summary paragraph. Only return short bullet points in the feedback array.
     `;
 
-    const result = await generateWithRetry(model, prompt);
-    res.status(200).json(parseJSON(result.response.text()));
+    const result = await generateWithRetry(ai, {
+      model: "gemini-2.5-flash",
+      contents: prompt,
+      config: { responseMimeType: "application/json" }
+    });
+    res.status(200).json(parseJSON(result.text));
   } catch (error) {
     console.error("Analysis Error:", error);
     res.status(500).json({ error: "Failed to analyze the interview round." });
@@ -124,11 +124,7 @@ exports.analyzeRound = async (req, res) => {
 exports.finalizeInterview = async (req, res) => {
   try {
     const { allRoundResults, field } = req.body;
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash", // CHANGED TO 2.5
-      generationConfig: { responseMimeType: "application/json" }
-    });
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
     const prompt = `
       Provide a final recruitment decision for this ${field} candidate.
@@ -146,8 +142,12 @@ exports.finalizeInterview = async (req, res) => {
       }
     `;
 
-    const result = await generateWithRetry(model, prompt);
-    const parsedData = parseJSON(result.response.text());
+    const result = await generateWithRetry(ai, {
+      model: "gemini-2.5-flash",
+      contents: prompt,
+      config: { responseMimeType: "application/json" }
+    });
+    const parsedData = parseJSON(result.text);
 
     if (req.user) {
       const hrScore = allRoundResults.hr?.score || 0;
