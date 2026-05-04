@@ -85,7 +85,7 @@ exports.startInterview = async (req, res) => {
 
   } catch (error) {
     console.error("Start Interview Error:", error);
-    res.status(500).json({ error: "Internal Server Error: Failed to generate interview profile." });
+    res.status(500).json({ error: "Internal Server Error: Failed to generate interview profile.", details: error.message });
   }
 };
 
@@ -116,7 +116,7 @@ exports.analyzeRound = async (req, res) => {
     res.status(200).json(parseJSON(result.text));
   } catch (error) {
     console.error("Analysis Error:", error);
-    res.status(500).json({ error: "Failed to analyze the interview round." });
+    res.status(500).json({ error: "Failed to analyze the interview round.", details: error.message });
   }
 };
 
@@ -182,7 +182,7 @@ exports.finalizeInterview = async (req, res) => {
     res.status(200).json(parsedData);
   } catch (error) {
     console.error("Finalize Error:", error);
-    res.status(500).json({ error: "Final report generation failed." });
+    res.status(500).json({ error: "Final report generation failed.", details: error.message });
   }
 };
 

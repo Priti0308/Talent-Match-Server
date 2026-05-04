@@ -96,7 +96,7 @@ ${resumeText.substring(0, 3000)}
       return res.status(429).json({ error: "AI Rate limit reached. Try again in 30 seconds." });
     }
 
-    res.status(500).json({ error: "Internal Server Error during analysis" });
+    res.status(500).json({ error: "Internal Server Error during analysis", details: error.message });
   }
 };
 
