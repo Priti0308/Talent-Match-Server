@@ -76,7 +76,7 @@ exports.startInterview = async (req, res) => {
     `;
 
     const result = await generateWithRetry(ai, {
-      model: "gemini-2.5-flash",
+      model: "gemini-1.5-flash",
       contents: prompt,
       config: { responseMimeType: "application/json" }
     });
@@ -109,7 +109,7 @@ exports.analyzeRound = async (req, res) => {
     `;
 
     const result = await generateWithRetry(ai, {
-      model: "gemini-2.5-flash",
+      model: "gemini-1.5-flash",
       contents: prompt,
       config: { responseMimeType: "application/json" }
     });
@@ -143,7 +143,7 @@ exports.finalizeInterview = async (req, res) => {
     `;
 
     const result = await generateWithRetry(ai, {
-      model: "gemini-2.5-flash",
+      model: "gemini-1.5-flash",
       contents: prompt,
       config: { responseMimeType: "application/json" }
     });
